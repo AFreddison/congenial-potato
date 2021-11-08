@@ -1,0 +1,28 @@
+---
+- name: Web-server installation
+  hosts: all
+
+  tasks:
+    - name: Install package httpd
+      package:
+        name: httpd
+        state: latest
+    
+    - name: Service enable
+      service:
+        name: httpd
+        state: started
+
+    - name: Create wellcome file
+      copy:
+        dest: "/var/www/html/index.html"
+        content: |
+          Welcome to my web server
+
+    - name: Add firewall rules
+      firewalld:
+        port: 80/tcp
+        permanent: yes
+        state: enabled
+
+... 

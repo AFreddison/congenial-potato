@@ -1,0 +1,22 @@
+---
+- name: Web-server removing
+  hosts: all
+
+  tasks:
+    - name: Remove package httpd
+      package:
+        name: httpd
+        state: absent
+    
+    - name: Remove Wellcome file
+      file:
+        path: /var/www/html/index.html
+        state: absent
+
+    - name: Remove firewall rules
+      firewalld:
+        port: 80/tcp
+        permanent: yes
+        state: disabled
+
+... 
