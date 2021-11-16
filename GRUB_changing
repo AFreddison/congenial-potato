@@ -1,0 +1,68 @@
+---
+- name: GRUB config changing
+  hosts: all
+
+  tasks:
+    - name: Check biosdevname
+      lineinfile:
+        path: /etc/default/grub
+        regexp: '^(GRUB_CMDLINE_LINUX=.(.*\bbiosdevname=\d\b).*)'
+        state: absent
+      check_mode: yes
+      changed_when: false
+      register: biosdevname_exist
+
+    - name: Check net_ifnames
+      lineinfile:
+        path: /etc/default/grub
+        regexp: '^(GRUB_CMDLINE_LINUX=.(.*\bnet.ifnames=\d\b).*)'
+        state: absent
+      check_mode: yes
+      changed_when: false
+      register: net_ifnames_exist
+
+    - name: Add biosdevname
+      lineinfile:
+        path: /etc/default/grub
+        regexp: '^(.*)GRUB_CMDLINE_LINUX="(.*)$'
+        line: '\1GRUB_CMDLINE_LINUX="biosdevname=0 \2 '
+        backrefs: yes
+      when: not biosdevname_exist.found
+      notify:
+        - mkconfig
+
+    - name: Add net.ifnames
+      lineinfile:
+        path: /etc/default/grub
+        regexp: '^(.*)GRUB_CMDLINE_LINUX="(.*)$'
+        line: '\1GRUB_CMDLINE_LINUX="net.ifnames=0 \2 '
+        backrefs: yes
+      when: not net_ifnames_exist.found
+      notify:
+        - mkconfig
+
+    - name: Change net.ifnames
+      lineinfile:
+        path: /etc/default/grub
+        regexp: '^(\s*[^#]*)net\Wifnames=.(.*)$'
+        line: '\1net.ifnames=0\2'
+        backrefs: yes
+      when: net_ifnames_exist.found
+      notify:
+        - mkconfig
+
+    - name: Change biosdevname
+      lineinfile:
+        path: /etc/default/grub
+        regexp: '^(\s*[^#]*)biosdevname=.(.*)$'
+        line: '\1biosdevname=0\2'
+        backrefs: yes
+      when: biosdevname_exist.found
+      notify:
+        - mkconfig
+
+
+  handlers:
+    - name: mkconfig
+      command: grub2-mkconfig
+...
