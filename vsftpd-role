@@ -1,0 +1,7 @@
+---
+- name: Start apache role
+  hosts: all
+
+  roles:
+    - role: vsftpd
+...
