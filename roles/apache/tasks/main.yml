@@ -1,0 +1,22 @@
+---
+- name: Install package httpd
+  package:
+    name: "{{ apache }}"
+    state: latest
+    
+- name: Service enable
+  service:
+    name: "{{ apache_service }}"
+    state: started
+
+- name: Create wellcome file
+  template:
+    src: "{{ apache_welcome_template }}"
+    dest: "{{ apache_index_file }}"
+
+- name: Add firewall rules
+  firewalld:
+    port: "{{ apache_port }}"
+    permanent: yes
+    state: enabled
+... 

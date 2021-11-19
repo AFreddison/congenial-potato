@@ -1,0 +1,7 @@
+---
+# defaults file for ./roles/apache
+apache: httpd
+apache_service: httpd
+apache_index_file: /var/www/html/index.html
+apache_port: 80/tcp
+apache_welcome_template: welcome.j2
