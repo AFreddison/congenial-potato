@@ -24,7 +24,7 @@
   file:
     path: /var/ftp/pub/upload
     state: directory
-    owner: root
+    owner: ftp
     group: root
     mode: 0755
 
